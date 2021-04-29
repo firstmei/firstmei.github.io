@@ -1,0 +1,69 @@
+---
+title: 前端换肤
+---
+<returnHeader />
+
+## css变量实现
+### 首先需要建一个存放公共css变量的js文件，将需要定义的css变量存放到该js文件
+```js
+// 字体变量
+const baseTheme = {
+  '--font-size-large-x': '22px',
+  '--font-size-large': '18px',
+  '--font-size-medium': '14px',
+  '--font-size-medium-x': '16px',
+  '--font-size-small-s': '10px',
+  '--font-size-small': '12px'
+};
+
+//浅色
+export const lightTheme = {
+  '--default-font-color': '#000622', // 默认字体颜色
+  '--hover-font-color': '#62972e', // 高亮颜色
+  '--bg-font-color': '#fff', // 背景色字体颜色
+  '--button-font-color': '#62972e',
+  ...baseTheme,
+};
+
+// 深色
+export const darkTheme = {
+  '--default-font-color': '#000622', // 默认字体颜色
+  '--hover-font-color': '#3b8cff',
+  '--bg-font-color': '#fff',
+  '--button-font-color': '#3b8cff',
+  ...baseTheme,
+};
+```
+
+### 安装css-vars-ponyfill 插件
+::: tip
+在传统浏览器和现代浏览器中为CSS自定义属性
+:::
+
+```js
+import { lightTheme, darkTheme } from '@/assets/js/variable.js'
+import cssVars from 'css-vars-ponyfill'
+export const initTheme = (theme) => {
+  document.documentElement.setAttribute('data-theme', theme ? 'light' : 'dark');
+  cssVars({
+    watch: true, // 当添加，删除或修改其<link>或<style>元素的禁用或href属性时，ponyfill将自行调用
+    variables: theme ? lightTheme : darkTheme, // variables 自定义属性名/值对的集合
+    onlyLegacy: false, // false  默认将css变量编译为浏览器识别的css样式  true 当浏览器不支持css变量的时候将css变量编译为识别的css
+  });
+};
+```
+
+### main.js初始化调用
+```js
+import { initTheme } from '@/utils/theme.js'
+initTheme(true)
+```
+
+### 切换主题的按钮组件中调用
+```js
+import { initTheme } from '@/utils/theme.js'
+changeTheme () {
+  this.theme = !this.theme
+  initTheme(this.theme)
+}
+```
