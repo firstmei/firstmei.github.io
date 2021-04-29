@@ -1,0 +1,64 @@
+---
+title: nginx
+---
+<returnHeader />
+
+# nginx
+
+## nginx定义
+nginx是一个高性能的HTTP和反向代理web服务器
+
+## ngnix安装
+官网地址：http://nginx.org/en/download.html
+
+## 常用命令
+1. 启动：<font class="red">start nginx</font>（或者双击nginx.exe）
+2. 重新启动 <font class="red">nginx -s reload</font>
+3. 停止运行 <font class="red">nginx -s stop/nginx -s quit</font>
+
+## ngnix配置
+1. <font class="red">解决前端缓存问题</font>
++ ngnix部署配置
+```js
+location = /index.html {
+  add_header Cache-Control "no-store";
+  add_header Cache-Control must-revalidate;
+}
+
+location / {
+  root   html;
+  index  index.html index.htm;
+  try_files $uri /index.html;
+}
+```
++ IIS部署
+```js
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+  <location path="index.html">
+		<system.webServer>
+			<staticContent>
+				<clientCache cacheControlMode="DisableCache" />
+			</staticContent>
+            <httpProtocol>
+                <customHeaders>
+                    <remove name="Cache-Control" />
+                    <add name="Cache-Control" value="no-store" />
+                </customHeaders>
+            </httpProtocol>
+		</system.webServer>
+    </location>
+</configuration>
+```
+2. <font class="red">使用Gzip加速</font>
+```js
+  # 开启gzip 压缩
+  gzip on;
+  gzip_buffers 32 4K;
+  # 压缩级别，1-10，数字越大压缩的越好
+  gzip_comp_level 6;
+  gzip_types text/plain application/javascript application/x-javascript text/css application/xml text/javascript application/x-httpd-php image/jpeg image/gif image/png;
+  # IE6对Gzip不友好，对Gzip
+  gzip_disable "MSIE [1-6]\.";
+  gzip_vary on;
+```
